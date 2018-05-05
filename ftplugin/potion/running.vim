@@ -2,21 +2,24 @@ if !exists("g:potion_command")
   let g:potion_command = "potion" 
 endif
 
-
-
 function! PotionCompileAndRunFile()
+  write
   silent !clear
   execute "!" . g:potion_command . " " . bufname("%")
 endfunction
 
-
 function! PotionShowBytecode()
-
+  silent write
   " Get the bytecode
   let bytecode = system(g:potion_command . " -c -V " . bufname("%")) 
+  let l:byteWindowStatus= bufwinnr("__Potion_Bytecode__")
 
   " Open a new split and set it up.
-  vsplit __Potion_Bytecode__
+  if(l:byteWindowStatus == -1)
+    vsplit __Potion_Bytecode__
+  else
+    execute l:byteWindowStatus . "wincmd w"
+  endif
   normal! ggdG
   setlocal filetype=potionbytecode
   setlocal buftype=nofile
